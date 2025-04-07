@@ -1,6 +1,6 @@
 # SwissQuiz Application
 
-## 📖 Table of Contents
+## Table of Contents
 
 1. [Introduction](#introduction)
 2. [Technologies](#technologies)
@@ -118,6 +118,12 @@ You can verify that the server is running by visiting `localhost:8080` in your b
 ./gradlew test
 ```
 
+### Unsplash API Access
+
+In order to avoid making API calls with Unsplash the API calls are being mocked, the old functionality still remains however
+and can be accessed by changing the `useFallback` Variable in `ApiFallbackConfig` back to false. This will result in using the
+Unsplash API again, however the API access may have deprecated at some point, and will have to be renewed by getting a new API key.
+
 #### Development Mode
 You can start the backend in development mode, this will automatically trigger a new build and reload the application
 once the content of a file has been changed.
@@ -199,6 +205,4 @@ We would like to thank [Fengjiao Ji](https://github.com/feji08) for guiding us t
 
 ## License <a id="license"></a>
 
-This project is licensed under the GNU GPLv3 License. 
-
-</div>
+This project is licensed under the GNU GPLv3 License.

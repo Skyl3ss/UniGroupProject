@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.config.ApiFallbackConfig;
 import ch.uzh.ifi.hase.soprafs24.config.ApiKeyConfig;
 import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.entity.Game;
@@ -23,8 +24,9 @@ import java.net.http.HttpResponse;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
+import static ch.uzh.ifi.hase.soprafs24.config.ApiFallbackConfig.fallbackResponses;
 
 // import org.locationtech.jts.geom.Geometry;
 // import org.locationtech.jts.geom.Coordinate;
@@ -46,6 +48,8 @@ public class RoundService {
 
 
     private static final double EARTH_RADIUS = 6371; // in kilometers
+
+    private Set<Integer> usedFallbackIndices = new HashSet<>();
 
     public void createRound(UUID gameId) {
         // Fetch game
@@ -87,46 +91,50 @@ public class RoundService {
 
     public String getRandomPicture(Round round, Game game) {
         try {
-            // Do the random picture Api Call
-            JSONObject jsonResponse = fetchPictureFromApi();
-
-            // Check location data of api call
-            JSONObject location = jsonResponse.optJSONObject("location");
-
-            System.out.println("------- location: --------" + location);
-            
-            if (location == null || 
-                !location.has("position") || 
-                location.isNull("position") ||
-                !location.getJSONObject("position").has("latitude") || 
-                !location.getJSONObject("position").has("longitude") || 
-                location.getJSONObject("position").isNull("latitude") || 
-                location.getJSONObject("position").isNull("longitude") || 
-                location.getJSONObject("position").getDouble("latitude") == 0|| 
-                location.getJSONObject("position").getDouble("longitude") == 0 ||
-                (location.getJSONObject("position").getDouble("latitude") == 46.818188 && 
-                location.getJSONObject("position").getDouble("longitude") == 8.227512)) {
-                System.out.println("Image does not have valid location data. Retrying...");
-                return getRandomPicture(round, game);
+            if (ApiFallbackConfig.useFallback) { // Use the fallbacks without API access
+                LocalTime endTime = calculateEndTime(game);
+                return generateFallbackResponse(endTime,round).toString();
             }
+            else { // Otherwise do the random picture Api Call
+                JSONObject jsonResponse = fetchPictureFromApi();
 
-            double latitude = location.getJSONObject("position").getDouble("latitude");
-            double longitude = location.getJSONObject("position").getDouble("longitude");
+                System.out.println(jsonResponse);
+                // Check location data of api call
+                JSONObject location = jsonResponse.optJSONObject("location");
 
-            // Check that the location is within Switzerland
-            // if (!isPointWithinSwissBoundary(latitude, longitude)) {
-            //     System.out.println("Location is not within the specified boundary. Retrying...");
-            //     return getRandomPicture(round, game);
-            // }
+                if (location == null ||
+                        !location.has("position") ||
+                        location.isNull("position") ||
+                        !location.getJSONObject("position").has("latitude") ||
+                        !location.getJSONObject("position").has("longitude") ||
+                        location.getJSONObject("position").isNull("latitude") ||
+                        location.getJSONObject("position").isNull("longitude") ||
+                        location.getJSONObject("position").getDouble("latitude") == 0 ||
+                        location.getJSONObject("position").getDouble("longitude") == 0 ||
+                        (location.getJSONObject("position").getDouble("latitude") == 46.818188 &&
+                                location.getJSONObject("position").getDouble("longitude") == 8.227512)) {
+                    System.out.println("Image does not have valid location data. Retrying...");
+                    return getRandomPicture(round, game);
+                }
 
-            // Set objects with data
-            round.setLatitude(latitude);
-            round.setLongitude(longitude);
-            roundRepository.save(round);
+                double latitude = location.getJSONObject("position").getDouble("latitude");
+                double longitude = location.getJSONObject("position").getDouble("longitude");
 
-            // Return trimmed object to the user
-            LocalTime endTime = calculateEndTime(game);
-            return generateResponse(jsonResponse, latitude, longitude, endTime).toString();
+                // Check that the location is within Switzerland
+                // if (!isPointWithinSwissBoundary(latitude, longitude)) {
+                //     System.out.println("Location is not within the specified boundary. Retrying...");
+                //     return getRandomPicture(round, game);
+                // }
+
+                // Set objects with data
+                round.setLatitude(latitude);
+                round.setLongitude(longitude);
+                roundRepository.save(round);
+
+                // Return trimmed object to the user
+                LocalTime endTime = calculateEndTime(game);
+                return generateResponse(jsonResponse, latitude, longitude, endTime).toString();
+            }
         } catch (Exception e) {
             System.err.println("An error occurred. Returning fallback response.");
             System.err.println("Error details: " + e.getMessage());
@@ -186,23 +194,38 @@ public class RoundService {
     }
 
     public JSONObject generateFallbackResponse(LocalTime endTime, Round round) {
-        double latitude = 47.399591;
-        double longitude = 8.514325;
+        Random rand = new Random();
 
-        JSONObject fallbackResponse = new JSONObject();
-        fallbackResponse.put("regular_url",
-                "https://images.unsplash.com/photo-1594754654150-2ae221b25fe8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NzE3ODd8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MTYyMDcwMzl8&ixlib=rb-4.0.3&q=80&w=1080");
-        fallbackResponse.put("user_name", "Raphi See");
-        fallbackResponse.put("user_username", "raphisee");
-        fallbackResponse.put("latitude", latitude);
-        fallbackResponse.put("longitude", longitude);
-        fallbackResponse.put("end_time", endTime.toString());
+        // If all fallbacks have been used, reset
+        if (usedFallbackIndices.size() == fallbackResponses.size()) {
+            usedFallbackIndices.clear();
+        }
+
+        // Build a list of available indices
+        List<Integer> availableIndices = new ArrayList<>();
+        for (int i = 0; i < fallbackResponses.size(); i++) {
+            if (!usedFallbackIndices.contains(i)) {
+                availableIndices.add(i);
+            }
+        }
+
+        // Randomly select from available ones
+        int randomIndex = availableIndices.get(rand.nextInt(availableIndices.size()));
+        usedFallbackIndices.add(randomIndex);
+
+        JSONObject selectedFallback = fallbackResponses.get(randomIndex);
+
+        selectedFallback.put("end_time", endTime.toString());
+
+        // Set latitude and longitude on the round object
+        double latitude = selectedFallback.getDouble("latitude");
+        double longitude = selectedFallback.getDouble("longitude");
 
         round.setLatitude(latitude);
         round.setLongitude(longitude);
         roundRepository.save(round);
 
-        return fallbackResponse;
+        return selectedFallback;
     }
 
     public JSONObject generateResponse(JSONObject jsonResponse, double latitude, double longitude, LocalTime endTime) {

@@ -1,10 +1,12 @@
 package ch.uzh.ifi.hase.soprafs24.service;
 
+import ch.uzh.ifi.hase.soprafs24.config.ApiFallbackConfig;
 import ch.uzh.ifi.hase.soprafs24.config.ApiKeyConfig;
 import ch.uzh.ifi.hase.soprafs24.entity.*;
 import ch.uzh.ifi.hase.soprafs24.repository.RoundRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.RoundStatsRepository;
 
+import static ch.uzh.ifi.hase.soprafs24.config.ApiFallbackConfig.fallbackResponses;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,7 +23,9 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.net.http.HttpClient;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -34,11 +38,6 @@ public class RoundServiceTest {
     private RoundStatsRepository roundStatsRepository;
     @Mock
     private GameService gameService;
-    @Mock
-    private HttpClient httpClient;
-    @Mock
-    private ApiKeyConfig apiKeyConfig;
-
     @InjectMocks
     private RoundService roundService;
 
@@ -210,20 +209,61 @@ public class RoundServiceTest {
         // Arrange
         LocalTime endTime = LocalTime.now();
         Round round = new Round();
-    
+
         // Act
         JSONObject result = roundService.generateFallbackResponse(endTime, round);
-    
+
         // Assert
-        // The result should contain the expected values
-        assertEquals("https://images.unsplash.com/photo-1594754654150-2ae221b25fe8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NzE3ODd8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MTYyMDcwMzl8&ixlib=rb-4.0.3&q=80&w=1080", result.get("regular_url"));
-        assertEquals(47.399591, result.get("latitude"));
-        assertEquals(8.514325, result.get("longitude"));
+        boolean matchFound = false;
+
+        for (JSONObject fallback : ApiFallbackConfig.fallbackResponses) {
+            boolean matches =
+                    fallback.get("regular_url").equals(result.get("regular_url")) &&
+                            fallback.get("latitude").equals(result.get("latitude")) &&
+                            fallback.get("longitude").equals(result.get("longitude"));
+
+            if (matches) {
+                matchFound = true;
+                break;
+            }
+        }
+
+        assertTrue(matchFound, "Result should match one of the known fallback responses.");
         assertEquals(endTime.toString(), result.get("end_time"));
-    
-        // The round should have been updated with the latitude and longitude
-        assertEquals(47.399591, round.getLatitude(), 0.0001);
-        assertEquals(8.514325, round.getLongitude(), 0.0001);
+
+        // Make sure round was updated to match one of the fallback responses
+        double resultLat = (double) result.get("latitude");
+        double resultLng = (double) result.get("longitude");
+
+        assertEquals(resultLat, round.getLatitude(), 0.0001);
+        assertEquals(resultLng, round.getLongitude(), 0.0001);
+    }
+
+    @Test
+    public void generateFallbackResponse_shouldReturnAllUniqueFallbacksBeforeRepeating() {
+        int totalFallbacks = ApiFallbackConfig.fallbackResponses.size();
+
+        Set<String> usedUrls = new HashSet<>();
+
+        for (int i = 0; i < totalFallbacks; i++) {
+            Round round = new Round();
+            LocalTime time = LocalTime.now();
+
+            JSONObject result = roundService.generateFallbackResponse(time, round);
+
+            String url = result.getString("regular_url");
+            assertFalse(usedUrls.contains(url), "Fallback was repeated before all were used.");
+            usedUrls.add(url);
+
+            // Optional: validate round got updated with correct coordinates
+            assertEquals(result.getDouble("latitude"), round.getLatitude(), 0.0001);
+            assertEquals(result.getDouble("longitude"), round.getLongitude(), 0.0001);
+        }
+
+        // After all are used, next one could repeat (reset), so we allow it
+        Round extraRound = new Round();
+        JSONObject repeated = roundService.generateFallbackResponse(LocalTime.now(), extraRound);
+        assertNotNull(repeated);
     }
 
 }
