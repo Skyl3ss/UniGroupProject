@@ -7,14 +7,14 @@ import { isProduction } from "./isProduction"
  * @returns {string}
  */
 export const getDomain = () => {
-  const prodUrl = "https://sopra-fs24-group-37-server.oa.r.appspot.com/" // TODO: insert your prod url for server (once deployed)
+  const prodUrl = "http://localhost:8080/" // TODO: insert your prod url for server (once deployed)
   const devUrl = "http://localhost:8080"
 
   return isProduction() ? prodUrl : devUrl
 }
 
 export const getWSDomain = () => {
-  const prodUrl = "wss://sopra-fs24-group-37-server.oa.r.appspot.com/ws" // TODO: insert your prod url for server (once deployed)
+  const prodUrl = "ws://localhost:8080/ws" // TODO: insert your prod url for server (once deployed)
   const devUrl = "ws://localhost:8080/ws"
 
   return isProduction() ? prodUrl : devUrl
