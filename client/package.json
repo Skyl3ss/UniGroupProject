@@ -1,0 +1,53 @@
+{
+  "name": "sopra-fs24-client-template",
+  "version": "0.24.0",
+  "private": true,
+  "dependencies": {
+    "@stomp/stompjs": "^7.0.0",
+    "@turf/turf": "^6.5.0",
+    "axios": "^1.6.8",
+    "eslint-config-react-app": "^7.0.1",
+    "howler": "^2.2.4",
+    "leaflet": "^1.9.4",
+    "lodash": "^4.17.21",
+    "react": "^18.2.0",
+    "react-confetti": "^6.1.0",
+    "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.1",
+    "react-router-dom": "^6.21.3",
+    "react-scripts": "^5.0.1",
+    "react-toastify": "^10.0.5",
+    "serve": "^14.2.1",
+    "typescript": "^3.2.1",
+    "ws": "^8.16.0"
+  },
+  "scripts": {
+    "dev": "react-scripts start",
+    "start": "serve -s build",
+    "build": "react-scripts build",
+    "gcp-build": "",
+    "eject": "react-scripts eject",
+    "test": "react-scripts test --env=jsdom"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^axios$": "axios/dist/node/axios.cjs"
+    }
+  },
+  "engines": {
+    "node": "20.11.0"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "sass": "^1.70.0"
+  }
+}

@@ -1,0 +1,48 @@
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@100;300;400;500;700;800;900&family=Roboto+Mono:wght@300;400;500;700&display=swap");
+@import "./theme";
+
+/**
+This file contains the general and shared style of your application.
+ */
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  font-family: $fontDefault;
+  background-image: url("../images/background_default.png");
+  background-size: cover; // Make the background cover the entire viewport
+  background-position: center; // Center the background image
+  background-repeat: no-repeat; // Prevent the background image from repeating
+}
+
+.flex-center-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* This ensures that the wrapper takes up the full viewport height */
+  width: 100%; /* Ensures the wrapper takes the full width of its parent */
+}
+
+
+
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+  line-height: inherit;
+  font-size: inherit;
+  outline: none;
+}
+
+
+*:focus {
+  outline: none;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}

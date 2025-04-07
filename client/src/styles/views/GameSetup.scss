@@ -1,0 +1,118 @@
+@import "../theme";
+
+/* The '&' is a shorthand for the containing element,
+  so for example a '&.user-list' inside .lobby will compile to
+  .lobby.user-list
+
+  for more information visit https://sass-lang.com/guide
+ */
+
+ // 
+.gamesetup {
+  &.container {
+    background: $background;
+    padding: 1.5em;
+    border-radius: $borderRadius;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: $dropShadow;
+    min-width: 350px; 
+    z-index: 2; // Ensure this is before the username container
+  }
+  &.user-list {
+    list-style: none;
+    padding-left: 0;
+    max-height: 400px; // Set the max height
+    overflow-y: auto; // Enable vertical scrolling
+  }
+  &.user-container {
+    font-size: 1.2rem; // Increase font size
+    font-weight: bold; // Make the text bold
+    margin: 0.5em 0;
+    width: 20em;
+    padding: 8px; // Add padding inside the container
+    border-radius: $borderRadius;
+    display: flex;
+    align-items: center; // Vertically center the content
+    justify-content: flex-start; // Align items to the left
+    background: lighten($accent, 5);
+    height: 50px; // Fix the height of the container
+  }
+  &.user-item {
+    display: flex;
+    flex-direction: row; // Ensure items are aligned in a row
+    align-items: center; // Vertically center the items
+    justify-content: flex-start; // Align items to the left
+    width: 100%;
+  }
+  & p,h2 {
+    margin: 0.5em 0;
+  }
+
+  &.explanation {
+    color: $boxText;
+    font-size: 18px;
+    text-align: left;
+    display: inline-block;
+    margin-right: 10px;
+    }
+  &.gamesetup-row {
+      display: flex; 
+      align-items: center; 
+      margin-bottom: 10px; 
+    }
+  & select {
+    background-color:$buttonColor;
+    color: white;
+    font-family: inherit; 
+    font-size: 18px;
+    padding: 10px;
+    border-color: $buttonColor; 
+    border-radius: 5px; 
+    &:hover {
+      transform: translateY(-2px);
+      cursor: pointer;
+      transition: transform 0.2s ease; }
+}}
+.side-by-side-containers {
+  display: flex;
+  gap: 50px; 
+}
+.label-custom {
+  font-size: 1.2em; 
+}
+.checkbox-custom {
+  transform: scale(2); 
+  margin-left: 15px; 
+}
+
+.align-self-end {
+  margin-top: auto;
+}
+
+.player {
+  &.container {
+    margin: 0.5em 0;
+    width: 20em;
+    padding: 10px;
+    border-radius: $borderRadius;
+    display: flex;
+    align-items: center;
+    background: lighten($accent, 5);
+  }
+  &.name {
+    font-weight: 300;
+    margin-left: 5px;
+  }
+  &.username {
+    font-weight: bold;
+    color: $boxText;
+  }
+  &.id {
+    margin-left: auto;
+    margin-right: 10px;
+    font-family: $fontDefault;
+    font-weight: 300;
+  }
+}

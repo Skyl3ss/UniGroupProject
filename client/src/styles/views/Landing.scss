@@ -1,0 +1,95 @@
+@import "../theme";
+
+// defines style of the login class and its child classes (container, form, etc.)
+  
+
+  // defines special background image for landing page (attention: must NOT be nested inside landing for inheritance to work!)
+  .background {
+    background-image: url("../../images/background_landing.png");
+    background-size: cover; // Ensure  the background covers the entire element
+    background-position: center; // Center the background image
+    background-repeat: no-repeat; // Do not repeat the background image
+    width: 100%; // Ensure the div takes up the full width
+    min-height: 100vh; // Ensure the div takes up the full viewport height
+  }
+
+.landing {
+  // defines style of basic container
+  &.container {
+    margin-top: 2em; 
+    min-height: 100px;
+    /* we include the center mixin defined in _theme.scss and save three duplicate lines :) */
+    @include center;
+    flex-direction: column;
+  }
+
+  // defines style of black login box
+  &.form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 400%;
+    max-width: 50em;
+    height: 25em;
+    font-size: 16px;
+    font-weight: 300;
+    padding-left: 37px;
+    padding-right: 37px;
+    border-radius: 0.75em;
+    // background-color: white;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    // box-shadow: $dropShadow;
+  }
+
+  // defines positions of descriptions
+  &.field {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  // defines style of input fields
+  &.input {
+    height: 35px;
+    padding-left: 15px;
+    margin-left: -4px;
+    border: none;
+    border-radius: 0.75em;
+    margin-bottom: 20px;
+    background: transparentize(gray, 0.95);
+    color: $boxText;
+    box-shadow: $dropShadow;
+  }
+
+  // defines style of title
+  &.title {
+    text-align: center;
+    color: $buttonText;
+    font-weight: bold;
+    font-size: 100px;
+    @include center;
+  }
+
+  // defines style of title
+  &.explanation {
+    color: $boxText;
+    font-weight: bold;
+    font-size: 25px;
+    @include center;
+  }
+
+  // defines style of descriptions
+  &.label {
+    color: $boxText;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  // defines style of button
+  &.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2em;
+    gap: 50px;
+  }
+}

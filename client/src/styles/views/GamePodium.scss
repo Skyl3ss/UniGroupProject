@@ -1,0 +1,138 @@
+@import "../theme";
+
+.gamepodium {
+  &.container {
+    background: $background;
+    padding: 1.5em;
+    border-radius: $borderRadius;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: $dropShadow;
+    min-width: 350px;
+    z-index: 2; // Ensure this is before the username container
+
+    // Set font style for the whole container
+    font-family: $fontDefault;
+    font-size: 16px;
+  }
+
+  .podium-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 300px;
+    margin: 10px 0;
+  }
+
+  .podium-position {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0 10px;
+    padding: 30px;
+    color: #fff;
+    border-radius: 20px;
+    min-width: 120px;
+  }
+
+  .position-1 {
+    height: 250px;
+    background-color: #F27EE5;
+  }
+
+  .position-2 {
+    height: 200px;
+    background-color: #F3A9F0;
+  }
+
+  .position-3 {
+    height: 150px;
+    background-color: #f7cdf2; /* Bronze color */
+  }
+
+  .podium-rank {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .podium-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .player-name {
+    font-size: 18px;
+  }
+
+  .player-score {
+    font-size: 16px;
+  }
+
+  ol {
+    list-style: decimal;
+    padding-left: 20px; // Add some left padding to align with the text
+  }
+
+  li {
+    font-family: Helvetica, Arial, sans-serif; // Apply Helvetica font
+    font-size: 20px; // Set font size to 16px
+    margin-bottom: 8px; // Add some space between list items
+  }
+
+  &.user-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .others-container {
+  margin-top: 20px;
+  text-align: center;
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .others-list {
+    list-style-type: none;
+    padding: 0;
+
+    .others-list-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: $background;
+      border-radius: $borderRadius;
+      margin-bottom: 10px;
+    }
+
+    .others-rank,
+    .others-name,
+    .others-score {
+      font-size: 18px;
+    }
+
+    .others-rank {
+      width: 30px;
+    }
+
+    .others-name {
+      flex: 1;
+      text-align: left;
+      padding-left: 10px;
+    }
+
+    .others-score {
+      width: 70px;
+      text-align: right;
+    }
+  }
+}
+
+}

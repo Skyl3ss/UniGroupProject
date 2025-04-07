@@ -1,0 +1,99 @@
+@import "../theme";
+
+/* The '&' is a shorthand for the containing element,
+  so for example a '&.user-list' inside .lobby will compile to
+  .lobby.user-list
+
+  for more information visit https://sass-lang.com/guide
+ */
+
+ // 
+ .gameround {
+  &.container {
+    justify-content: center;
+    align-items: center;
+    background: $background;
+    padding: 1.5em;
+    border-radius: $borderRadius;
+    display: flex;
+    flex-direction: column;
+    box-shadow: $dropShadow;
+    flex: 1 1 50%; // Take up half the width
+    min-width: 350px;
+    max-width: 50%;
+    text-align: center; // This will center-align text within the container
+    max-height: 690px;
+    z-index: 2; // Ensure this is before the username container
+
+    img {
+      max-height: 100%; // Maximum height of the image is 100% of its container
+      max-width: 100%; // Maximum width of the image is 100% of its container
+      object-fit: contain; // Ensures the image is scaled to maintain its aspect ratio while fitting within the element’s content box
+    }
+
+    h2 { // Assuming the title uses an <h2> tag or adjust accordingly
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  .button-container { // Container for buttons
+    display: flex;  // Align children in a row
+    justify-content: space-around;  // Distribute space between and around buttons
+    width: 100%;  // Take up the full width of the parent container
+    margin-top: 20px;  // Space above the button container
+
+    button {
+      flex: 1;  // Each button takes equal space
+      padding: 10px 20px;  // Padding inside the button
+      margin: 0 10px;  // Margin between buttons
+      font-size: 16px;  // Larger text for better readability
+      background-color: $buttonColor;  // Use your theme accent color for background
+      color: $background;  // Contrast text color
+      border: none;  // No borders
+      border-radius: $borderRadius;  // Rounded corners
+      cursor: pointer;  // Cursor indicates button
+    }
+  }
+
+  &.side-by-side-containers {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch; // Make sure containers stretch to fill the parent's height
+    width: 100%;
+    gap: 50px;
+    }
+
+  .title-font {
+    font-family: 'Helvetica', sans-serif;  // Example font family
+    font-size: 24px;  // Example font size
+    font-weight: bold;  // Example font weight
+  }     
+}
+
+.map {
+  &.container {
+    margin: 0.5em 0;
+    width: 20em;
+    padding: 10px;
+    border-radius: $borderRadius;
+    display: flex;
+    align-items: center;
+    background: lighten($accent, 5);
+  }
+  &.name {
+    font-weight: 300;
+    margin-left: 5px;
+  }
+  &.username {
+    font-weight: bold;
+    color: $boxText;
+  }
+  &.id {
+    margin-left: auto;
+    margin-right: 10px;
+    font-family: $fontDefault;
+    font-weight: 300;
+  }
+  
+}
